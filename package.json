@@ -1,0 +1,23 @@
+{
+  "name": "losc4r_ti",
+  "version": "1.0.0",
+  "description": "Desenvolvimento de um sistema desktop para uma gestão de ordem de serviços",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/losc4r/losc4r_ti.git"
+  },
+  "author": "Carlos Antonio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/losc4r/losc4r_ti/issues"
+  },
+  "homepage": "https://github.com/losc4r/losc4r_ti#readme",
+  "devDependencies": {
+    "electron": "^34.2.0"
+  }
+}
