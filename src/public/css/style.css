@@ -22,8 +22,13 @@
 footer {
     background-color: #008000;
     width: 100%;
+    height: 50px;
     position: fixed;
     bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+
 }
 
 footer p {
