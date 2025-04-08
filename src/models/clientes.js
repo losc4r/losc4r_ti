@@ -21,7 +21,7 @@ const clienteSchema = new Schema({
     emailCliente: {
         type: String
     },
-    
+
     foneCliente: {
         type: String
     },
@@ -54,7 +54,7 @@ const clienteSchema = new Schema({
         type: String,
     }
 
-}, {versionkey: false}) // não versionar os dados armazenados
+}, { versionkey: false }) // não versionar os dados armazenados
 
 // exportar para o main o modelo de dados
 // OBS: Clientes será o nome da coleção

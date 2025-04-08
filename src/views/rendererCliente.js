@@ -51,7 +51,7 @@ let ufClient = document.getElementById('inputUFClient')
 
 // Evento associado ao botão submmit (uso das validações do html)
 frmClient.addEventListener('submit', async (event) => {
-    //evitar o compotamento padrão do submit que é enviar os dados do formulário e reiniciar o documento html
+    //evitar o comportamento padrão do submit que é enviar os dados do formulário e reiniciar o documento html
     event.preventDefault()
     //teste importante (recebimento dos dados do formulário - passo 1 do fluxo)
     console.log(nameClient.value, cpfClient.value, emailClient.value, phoneClient.value, cepClient.value, addressClient.value, numberClient.value, complementClient.value, bairroClient.value, cityClient.value, ufClient.value)
@@ -75,3 +75,17 @@ frmClient.addEventListener('submit', async (event) => {
 })
 
 // = Fim CRUD Create/Update
+
+// =================== Reset Form ============ //
+
+function resetForm() {
+    // limpar os campos e resetar o formulário com as configuraçoes pré definidas
+    location.reload()
+}
+
+// recebimento do pedido do main para resetar o formulario
+api.resetForm((args) => {
+    resetForm()
+})
+
+// =================== Fim Reset Form ======== //
