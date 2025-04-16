@@ -293,87 +293,111 @@ ipcMain.on('new-client', async (event, client) => {
 
 async function relatorioClientes() {
     try {
-      // passo 1: consultar o banco de dados e obter a listagem de clientes cadastrados por ordem alfabetica
-      const clientes = await clientModel.find().sort({ nomeCliente: 1 })
-  
-      // teste de recebimento da listagem de clientes
-      // console.log(clientes)
-      // Passo 2: Formatação do documento pdf
-      // p - portrait | l - landscape | mm e a4 (folha A4(210x297mm))
-      const doc = new jsPDF('p', 'mm', 'a4')
-  
-      // inserir imagem no documento pdf
-      // imagePath (caminho da imagem que será inserida no pdf)
-      // imageBase 64 (usa da biblioteca fs para ler o arquivo no formato png)
-      const imagePath = path.join(__dirname, 'src', 'public', 'img', 'logo.png')
-      const imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' })
-      doc.addImage(imageBase64, 'PNG', 5, 8) //(5mm, 8mm x,y)
-  
-      // definir o tamanho da fonte
-      doc.setFontSize(18)
-  
-      // escrever um texto (título)
-      doc.text("Relatório de Clientes", 14, 45)//x,y (mm) 
-  
-      // inserir a data atual no relatório
-      const dataAtual = new Date().toLocaleDateString('pt-BR')
-      doc.setFontSize(12)
-      doc.text(`Data: ${dataAtual}`, 160, 10)
-  
-      // variavel de apio na formatação
-      let y = 60
-      doc.text("Nome", 14, y)
-      doc.text("Telefone", 80, y)
-      doc.text("E-mail", 130, y)
-      y += 5
-  
-      // desenhar linha
-      doc.setLineWidth(0.5) // expessura da linha
-      doc.line(10, y, 200, y) // inicio e fim
-  
-      //renderizar os clientes cadastrados no banco
-      y += 10 // espaçãmento da linha
-      // percorrer o vetor clientes (obtido do banco) usando o laço forEach (equivale ao laço for)
-      clientes.forEach((c) => {
-        // adicionar outra página se a folha inteira for preenchida (estratégia é saber o tamanho da folha)
-        if (y > 280) {
-          doc.addPage()
-          y = 20 // resetar a variável y
-          // redesenhar o cabeçalho
-          doc.text("Nome", 14, y)
-          doc.text("Telefone", 80, y)
-          doc.text("E-mail", 130, y)
-          y += 5
-          doc.setLineWidth(0.5)
-          doc.line(10, y, 200, y)
-          y += 10
+        // passo 1: consultar o banco de dados e obter a listagem de clientes cadastrados por ordem alfabetica
+        const clientes = await clientModel.find().sort({ nomeCliente: 1 })
+
+        // teste de recebimento da listagem de clientes
+        // console.log(clientes)
+        // Passo 2: Formatação do documento pdf
+        // p - portrait | l - landscape | mm e a4 (folha A4(210x297mm))
+        const doc = new jsPDF('p', 'mm', 'a4')
+
+        // inserir imagem no documento pdf
+        // imagePath (caminho da imagem que será inserida no pdf)
+        // imageBase 64 (usa da biblioteca fs para ler o arquivo no formato png)
+        const imagePath = path.join(__dirname, 'src', 'public', 'img', 'logo.png')
+        const imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' })
+        doc.addImage(imageBase64, 'PNG', 5, 8) //(5mm, 8mm x,y)
+
+        // definir o tamanho da fonte
+        doc.setFontSize(18)
+
+        // escrever um texto (título)
+        doc.text("Relatório de Clientes", 14, 45)//x,y (mm) 
+
+        // inserir a data atual no relatório
+        const dataAtual = new Date().toLocaleDateString('pt-BR')
+        doc.setFontSize(12)
+        doc.text(`Data: ${dataAtual}`, 160, 10)
+
+        // variavel de apio na formatação
+        let y = 60
+        doc.text("Nome", 14, y)
+        doc.text("Telefone", 80, y)
+        doc.text("E-mail", 130, y)
+        y += 5
+
+        // desenhar linha
+        doc.setLineWidth(0.5) // expessura da linha
+        doc.line(10, y, 200, y) // inicio e fim
+
+        //renderizar os clientes cadastrados no banco
+        y += 10 // espaçãmento da linha
+        // percorrer o vetor clientes (obtido do banco) usando o laço forEach (equivale ao laço for)
+        clientes.forEach((c) => {
+            // adicionar outra página se a folha inteira for preenchida (estratégia é saber o tamanho da folha)
+            if (y > 280) {
+                doc.addPage()
+                y = 20 // resetar a variável y
+                // redesenhar o cabeçalho
+                doc.text("Nome", 14, y)
+                doc.text("Telefone", 80, y)
+                doc.text("E-mail", 130, y)
+                y += 5
+                doc.setLineWidth(0.5)
+                doc.line(10, y, 200, y)
+                y += 10
+            }
+            doc.text(c.nomeCliente, 14, y)
+            doc.text(c.foneCliente, 80, y)
+            doc.text(c.emailCliente || "N/A", 130, y)
+            y += 10 // quebra de linha
+        })
+
+        // Adicionar numeração automatica de páginas
+        const paginas = doc.internal.getNumberOfPages()
+        for (let i = 1; i <= paginas; i++) {
+            doc.setPage(i)
+            doc.setFontSize(10)
+            doc.text(`Página ${i} de ${paginas}`, 105, 290, { align: 'center' })
         }
-        doc.text(c.nomeCliente, 14, y)
-        doc.text(c.foneCliente, 80, y)
-        doc.text(c.emailCliente || "N/A", 130, y)
-        y += 10 // quebra de linha
-      })
-  
-      // Adicionar numeração automatica de páginas
-      const paginas = doc.internal.getNumberOfPages()
-      for (let i = 1; i <= paginas; i++) {
-        doc.setPage(i)
-        doc.setFontSize(10)
-        doc.text(`Página ${i} de ${paginas}`, 105, 290, {align:'center'})
-      }
-  
-      // Definir o caminho do arquivo temporário e nome do arquivo
-      const tempDir = app.getPath('temp')
-      const filePath = path.join(tempDir, 'clientes.pdf')
-  
-      // salvar  temporariamente o arquivo
-      doc.save(filePath)
-  
-      // abrir o arquivo no aplicativo padrão de leitura de pdf do computador do usuário
-      shell.openPath(filePath)
+
+        // Definir o caminho do arquivo temporário e nome do arquivo
+        const tempDir = app.getPath('temp')
+        const filePath = path.join(tempDir, 'clientes.pdf')
+
+        // salvar  temporariamente o arquivo
+        doc.save(filePath)
+
+        // abrir o arquivo no aplicativo padrão de leitura de pdf do computador do usuário
+        shell.openPath(filePath)
     } catch (error) {
-      console.log(error)
+        console.log(error)
     }
-  }
-  
-  // =========== FIM Relatório de Cliente =============
+}
+
+// =========== FIM Relatório de Cliente =============
+
+// =========== CRUD READ ============================
+
+ipcMain.on('search-name', async (event, name) => {
+    //console.log("teste IPC search-name")
+    //console.log(name) // teste do passo 2 (importante)
+    // passo 3 e 4 busca dos dados cliente do banco
+    // find ({nomeCliente: name}) - buscar pelo nome
+    // RegExp(name, i) - i (insensitive / ignorar maiusculo ou minusculo)
+    try {
+        const dataClient = await clientModel.find({
+            nomeCliente: new RegExp(name, 'i')
+        })
+        console.log(dataClient) // teste passos 3 e 4 (importante)
+        // passo 5:
+        // enviando os dados cliente ao rendererCliente
+        // OBS: IPC só trabalha com string, então é necessário converter o JSON para o string
+        event.reply ('render-client', JSON.stringify(dataClient))
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// =========== FIM CRUD READ ========================

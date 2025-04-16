@@ -19,6 +19,9 @@ function buscarCEP() {
         .catch(error => console.log(error))
 }
 
+// vetor global que será usado na manipulação dos dados
+let arrayClient = []
+
 // capturar o foco na busca pelo nome
 // a constant foco obtem o elemento html (input) identificado como 'searchCliente'
 const foco = document.getElementById('searchClient')
@@ -75,6 +78,43 @@ frmClient.addEventListener('submit', async (event) => {
 })
 
 // = Fim CRUD Create/Update
+
+// ========= CRUD Read ================
+
+function buscarCliente() {
+    //console.log("teste do botão buscar")
+    // passo 1: capturar o nome do cliente
+    let name = document.getElementById('searchClient').value
+    console.log(name) // teste do passo 1
+    api.searchName(name) // passo 2: envio do nome ao main
+    // recebimento dos dados do cliente
+    api.renderClient((event, dataClient) => {
+        console.log(dataClient) // teste do passo 5
+        // passo 6 renderizar os dados do cliente no formulário 
+        // - criar um vetor global para manipulação dos dados
+        // - criar uma constante para converter os dados recebidos (string) para o formato JSON
+        // usar o laço forEach para percorrer o vetor e setar os campos (caixas de texto) do formulário
+        const dadosCliente = JSON.parse(dataClient)
+        // atribuir ao vetor os dados do cliente
+        arrayClient = dadosCliente
+        // extrair os dados do cliente
+        arrayClient.forEach((c) => {
+            nameClient.value = c.nomeCliente,
+            cpfClient.value = c.cpfCliente,
+            emailClient.value = c.emailCliente,
+            phoneClient.value = c.foneCliente,
+            cepClient.value = c.cepCliente,
+            addressClient.value = c.logradouroCliente,
+            numberClient.value = c.numeroCliente,
+            complementClient.value = c.complementoCliente,
+            bairroClient.value = c.bairroCliente,
+            cityClient.value = c.cidadeCliente,
+            ufClient.value = c.ufCliente
+        })
+    })
+}
+
+// ========= Fim CRUD Read ============
 
 // =================== Reset Form ============ //
 
